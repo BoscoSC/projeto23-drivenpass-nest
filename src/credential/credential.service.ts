@@ -5,22 +5,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
-import { User } from '@prisma/client';
 import { CredentialRepository } from './credential.repository';
+import { CredentialHelpers } from 'src/helpers/credential.helpers';
 
 @Injectable()
 export class CredentialService {
-  Cryptr = require('cryptr');
-  crypter = new this.Cryptr(process.env.CRYPTR_SECRET);
+  constructor(
+    private readonly credentialRepository: CredentialRepository,
+    private readonly credentialHelpers: CredentialHelpers,
+  ) {}
 
-  constructor(private readonly credentialRepository: CredentialRepository) {}
-
-  async create(
-    createCredentialDto: CreateCredentialDto,
-    user: Omit<User, 'password' | 'createdAt' | 'updatedAt'>,
-  ) {
+  async create(createCredentialDto: CreateCredentialDto, userId: number) {
     const { title } = createCredentialDto;
-    const { id: userId } = user;
     const credential = await this.findOneByTitleAndUserId(title, userId);
 
     if (credential) {
@@ -29,10 +25,8 @@ export class CredentialService {
       );
     }
 
-    const data: CreateCredentialDto = {
-      ...createCredentialDto,
-      password: this.crypter.encrypt(createCredentialDto.password),
-    };
+    const data: CreateCredentialDto =
+      this.credentialHelpers.encryptCredential(createCredentialDto);
 
     return this.credentialRepository.create(data, userId);
   }
@@ -40,10 +34,9 @@ export class CredentialService {
   async findAll(userId: number) {
     const credentials = await this.credentialRepository.findAll(userId);
 
-    return credentials.map((cred) => ({
-      ...cred,
-      password: this.crypter.decrypt(cred.password),
-    }));
+    return credentials.map((cred) =>
+      this.credentialHelpers.decryptCredential(cred),
+    );
   }
 
   async findOne(id: number, userId: number) {
@@ -59,16 +52,13 @@ export class CredentialService {
       );
     }
 
-    return {
-      ...credential,
-      password: this.crypter.decrypt(credential.password),
-    };
+    return this.credentialHelpers.decryptCredential(credential);
   }
 
   async remove(id: number, userId: number) {
     await this.findOne(id, userId);
 
-    return this.credentialRepository.remove(id);
+    return this.credentialRepository.remove(id, userId);
   }
 
   private findOneByTitleAndUserId(title: string, userId: number) {
