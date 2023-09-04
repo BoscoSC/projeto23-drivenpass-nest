@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCardDto } from '../card/dto/create-card.dto';
 
 @Injectable()
-export class CardHelpers {
+export class CardUtils {
   private Cryptr = require('cryptr');
   private crypter: any;
 

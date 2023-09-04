@@ -6,13 +6,13 @@ import {
 } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { CardRepository } from './card.repository';
-import { CardHelpers } from '../helpers/card.helpers';
+import { CardUtils } from '../utils/card.utils';
 
 @Injectable()
 export class CardService {
   constructor(
     private readonly cardRepository: CardRepository,
-    private readonly cardHelpers: CardHelpers,
+    private readonly cardUtils: CardUtils,
   ) {}
 
   async create(createCardDto: CreateCardDto, userId: number) {
@@ -25,7 +25,7 @@ export class CardService {
       );
     }
 
-    const data: CreateCardDto = this.cardHelpers.encryptCard(createCardDto);
+    const data: CreateCardDto = this.cardUtils.encryptCard(createCardDto);
 
     return this.cardRepository.create(data, userId);
   }
@@ -33,7 +33,7 @@ export class CardService {
   async findAll(userId: number) {
     const cards = await this.cardRepository.findAll(userId);
 
-    return cards.map((card) => this.cardHelpers.decryptCard(card));
+    return cards.map((card) => this.cardUtils.decryptCard(card));
   }
 
   async findOne(id: number, userId: number) {
@@ -49,7 +49,7 @@ export class CardService {
       );
     }
 
-    return this.cardHelpers.decryptCard(card);
+    return this.cardUtils.decryptCard(card);
   }
 
   async remove(id: number, userId: number) {

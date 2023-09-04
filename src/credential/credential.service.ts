@@ -6,13 +6,13 @@ import {
 } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { CredentialRepository } from './credential.repository';
-import { CredentialHelpers } from 'src/helpers/credential.helpers';
+import { CredentialUtils } from 'src/utils/credential.utils';
 
 @Injectable()
 export class CredentialService {
   constructor(
     private readonly credentialRepository: CredentialRepository,
-    private readonly credentialHelpers: CredentialHelpers,
+    private readonly credentialUtils: CredentialUtils,
   ) {}
 
   async create(createCredentialDto: CreateCredentialDto, userId: number) {
@@ -26,7 +26,7 @@ export class CredentialService {
     }
 
     const data: CreateCredentialDto =
-      this.credentialHelpers.encryptCredential(createCredentialDto);
+      this.credentialUtils.encryptCredential(createCredentialDto);
 
     return this.credentialRepository.create(data, userId);
   }
@@ -35,7 +35,7 @@ export class CredentialService {
     const credentials = await this.credentialRepository.findAll(userId);
 
     return credentials.map((cred) =>
-      this.credentialHelpers.decryptCredential(cred),
+      this.credentialUtils.decryptCredential(cred),
     );
   }
 
@@ -52,7 +52,7 @@ export class CredentialService {
       );
     }
 
-    return this.credentialHelpers.decryptCredential(credential);
+    return this.credentialUtils.decryptCredential(credential);
   }
 
   async remove(id: number, userId: number) {

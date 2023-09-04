@@ -3,7 +3,7 @@ import { CreateCredentialDto } from '../credential/dto/create-credential.dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CredentialHelpers {
+export class CredentialUtils {
   private Cryptr = require('cryptr');
   private crypter: any;
 
