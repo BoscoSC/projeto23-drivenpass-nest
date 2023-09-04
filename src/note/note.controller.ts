@@ -19,7 +19,7 @@ import { AuthenticatedUser } from '../protocols/protocols';
 @UseGuards(AuthGuard)
 @Controller('notes')
 export class NoteController {
-  constructor(private readonly noteService: NoteService) {}
+  constructor(private readonly serviceNote: NoteService) {}
 
   @Post()
   create(
@@ -27,14 +27,14 @@ export class NoteController {
     @User() user: AuthenticatedUser,
   ) {
     const { id } = user;
-    return this.noteService.create(createNoteDto, id);
+    return this.serviceNote.create(createNoteDto, id);
   }
 
   @Get()
   findAll(@User() user: AuthenticatedUser) {
     const { id } = user;
 
-    return this.noteService.findAll(id);
+    return this.serviceNote.findAll(id);
   }
 
   @Get(':id')
@@ -44,7 +44,7 @@ export class NoteController {
   ) {
     const { id: userId } = user;
 
-    return this.noteService.findOne(+id, userId);
+    return this.serviceNote.findOne(+id, userId);
   }
 
   @Delete(':id')
@@ -55,6 +55,6 @@ export class NoteController {
   ) {
     const { id: userId } = user;
 
-    return this.noteService.remove(+id, userId);
+    return this.serviceNote.remove(+id, userId);
   }
 }

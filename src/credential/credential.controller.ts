@@ -19,7 +19,7 @@ import { User } from '../decorators/user.decorator';
 @UseGuards(AuthGuard)
 @Controller('credentials')
 export class CredentialController {
-  constructor(private readonly credentialService: CredentialService) {}
+  constructor(private readonly serviceCredential: CredentialService) {}
 
   @Post()
   create(
@@ -28,14 +28,14 @@ export class CredentialController {
   ) {
     const { id } = user;
 
-    return this.credentialService.create(createCredentialDto, id);
+    return this.serviceCredential.create(createCredentialDto, id);
   }
 
   @Get()
   findAll(@User() user: AuthenticatedUser) {
     const { id } = user;
 
-    return this.credentialService.findAll(id);
+    return this.serviceCredential.findAll(id);
   }
 
   @Get(':id')
@@ -45,7 +45,7 @@ export class CredentialController {
   ) {
     const { id: userId } = user;
 
-    return this.credentialService.findOne(+id, userId);
+    return this.serviceCredential.findOne(+id, userId);
   }
 
   @Delete(':id')
@@ -56,6 +56,6 @@ export class CredentialController {
   ) {
     const { id: userId } = user;
 
-    return this.credentialService.remove(+id, userId);
+    return this.serviceCredential.remove(+id, userId);
   }
 }

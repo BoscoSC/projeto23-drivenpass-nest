@@ -19,7 +19,7 @@ import { AuthGuard } from '../guards/auth.guard';
 @UseGuards(AuthGuard)
 @Controller('cards')
 export class CardController {
-  constructor(private readonly cardService: CardService) {}
+  constructor(private readonly serviceCard: CardService) {}
 
   @Post()
   create(
@@ -28,14 +28,14 @@ export class CardController {
   ) {
     const { id } = user;
 
-    return this.cardService.create(createCardDto, id);
+    return this.serviceCard.create(createCardDto, id);
   }
 
   @Get()
   findAll(@User() user: AuthenticatedUser) {
     const { id } = user;
 
-    return this.cardService.findAll(id);
+    return this.serviceCard.findAll(id);
   }
 
   @Get(':id')
@@ -45,7 +45,7 @@ export class CardController {
   ) {
     const { id: userId } = user;
 
-    return this.cardService.findOne(+id, userId);
+    return this.serviceCard.findOne(+id, userId);
   }
 
   @Delete(':id')
@@ -56,6 +56,6 @@ export class CardController {
   ) {
     const { id: userId } = user;
 
-    return this.cardService.remove(+id, userId);
+    return this.serviceCard.remove(+id, userId);
   }
 }
